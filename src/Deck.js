@@ -18,6 +18,13 @@ class Deck extends Component {
         this.state= { panResponder, position };
         // this.panResponder = panResponder; << could also use this! will never call "setState"
     }
+
+    getCardStyle() {
+        return {
+            ...this.state.position.getLayout(),
+            transform: [{ rotate: '45deg' }]
+        }
+    }
     
     
     renderCards() {
@@ -25,7 +32,8 @@ class Deck extends Component {
             if (index === 0) {
                 return (
                     <Animated.View
-                        style={this.state.position.getLayout()}
+                        key={item.id}
+                        style={this.getCardStyle()}
                         {...this.state.panResponder.panHandlers}
                     >
                         {this.props.renderCard(item)}
