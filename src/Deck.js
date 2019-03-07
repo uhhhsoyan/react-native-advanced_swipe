@@ -1,5 +1,12 @@
 import React, { Component } from 'react';
-import { View, Animated, PanResponder, Dimensions } from 'react-native';
+import {
+    View,
+    Animated,
+    PanResponder,
+    Dimensions,
+    LayoutAnimation,
+    UIManager
+} from 'react-native';
 
 const SCREEN_WIDTH = Dimensions.get('window').width;
 const SWIPE_THRESHOLD = 0.25 * SCREEN_WIDTH;
@@ -34,6 +41,17 @@ class Deck extends Component {
 
         this.state= { panResponder, position, index: 0 };
         // this.panResponder = panResponder; << could also use this! will never call "setState"
+    }
+
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.data !== this.props.data) {
+            this.setState({ idnex: 0 });
+        }
+    }
+    
+    componentWillUpdate() {
+        UIManager.setLayoutAnimationEnabledExperimental && UIManager.setLayoutAnimationEnabledExperimental(true);
+        LayoutAnimation.spring();
     }
 
     forceSwipe(direction) {
@@ -92,9 +110,13 @@ class Deck extends Component {
                 )
             }
             return (
-                <View key={item.id} style={styles.cardStyle}>
+                <Animated.View 
+                    key={item.id}
+                    style={[styles.cardStyle, { top: 10 * (deckIndex - this.state.index)}]}
+                >
                     {this.props.renderCard(item)}
-                </View>
+                </Animated.View>
+                // using Animated.View to prevent the flashing image problem
             )
         }).reverse();
     }
